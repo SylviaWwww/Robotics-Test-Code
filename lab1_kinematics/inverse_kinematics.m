@@ -1,0 +1,20 @@
+function [wl, wr] = inverse_kinematics(u, q)
+    % Compute the left and right wheel velocities (wl, wr) required for the robot
+    % to achieve a forward speed u and angular speed q.
+    
+    % The scale parameter and wheel track required to solve this are provided here.
+    % You can find these values in the robot simulator as well.
+    % In real-life, you would have to measure or calibrate them!
+    scale_parameter = 4.8e-3;
+    wheel_track = 0.13;
+
+    vl = u - (q * wheel_track / 2);
+    vr = u + (q * wheel_track / 2);
+
+    wl = vl / scale_parameter; 
+    wr = vr / scale_parameter;  
+
+    % wl = round(wl);
+    % wr = round(wr);
+
+end

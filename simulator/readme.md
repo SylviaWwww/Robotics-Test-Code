@@ -1,0 +1,1 @@
+This script is a simulator of the real PiBot. You still need to download the zip file from Wattle for the lab assignment!

@@ -1,0 +1,27 @@
+function drive_square(pb, sideLength)
+% DRIVE_SQUARE send a sequence of commands to the pibot to make it drive in a square.
+
+% pb is the pibot instance to send commands
+% sideLength is the length of each side of the square to drive
+    u = 0.25;
+    q = pi/2;
+
+    T_forward = sideLength / u;
+    T_turn = (pi/2) / q;
+
+    for i = 1:4
+        [wl, wr] = inverse_kinematics(u, 0);
+        wheel_velocities = [wl,-wr];
+        fprintf("Step %d: wl = %.2f, wr = %.2f\n", i, wl, wr);
+        pb.setVelocity(wheel_velocities, T_forward);
+        pause(0.2);
+
+        [wl, wr] = inverse_kinematics(0, q);
+        wheel_velocities = [wl,-wr];
+
+        fprintf("Step %d: wl = %.2f, wr = %.2f\n", i, wl, wr);
+        pb.setVelocity(wheel_velocities, T_turn);
+        pause(0.2);
+    end
+
+end
