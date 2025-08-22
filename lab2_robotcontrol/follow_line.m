@@ -20,19 +20,6 @@ while true
     
     % detect any visible landmarks and record their ids
 
-    % Raw notes:
-    % detect any visible landmarks and record their ids
-    % detects landmarks before you determine inputs
-    % set velocity
-    % integrate kinematics
-    
-    % For the determine inputs part:
-    % binarise image (use rgb2grey or imbinarise or something?)
-    % crop image
-    % Find black pixels
-    % Normalise and transform point
-    % Then get q and u!
-
     % Find the centre of the line to follow
     line_centre = 0.0; % replace with correct value
     
