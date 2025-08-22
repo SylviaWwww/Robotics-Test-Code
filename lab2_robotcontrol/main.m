@@ -10,4 +10,4 @@ camAxes = axes();
 % image you get will depend on the floor image the simulator is using. The
 % walls of the room will be rendered as pure white.
 img = pb.getImage();
-imshow(img, 'Parent', camAxes);
+imwrite(img, "img10.png");
