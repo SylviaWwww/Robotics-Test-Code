@@ -4,9 +4,9 @@
 % pb.place([2.5;1.5], 0);
 
 pb = PiBot('192.168.50.1');
-
-u = 0;
-q = 0.5;
+% 
+u = 0.5;
+q = 0;
 
 [wl, wr] = inverse_kinematics(u, q);
 
@@ -58,4 +58,4 @@ pb.setVelocity(wheel_velocities, time);
 % % fprintf("expected distance: %.3f m\n", expected_dist);
 % % fprintf("actual distance: %.3f m\n", actual_dist);
 % % fprintf("scale factor adjustment: %.5f\n", scale_factor_adjustment);
-% 
+% % 

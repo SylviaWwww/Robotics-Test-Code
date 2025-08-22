@@ -8,7 +8,7 @@
 pb = PiBot('192.168.50.1');
 
 % Drive a square of side length 2m
-drive_square(pb, 0.5);
+drive_square(pb, 1);
 
 
 % % Place the robot at the start of another square
