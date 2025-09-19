@@ -5,6 +5,10 @@
 % Start by placing your robot at the start of the line
 %pb.place([2.5;2.5], 0.6421);
 
+addpath("arucoDetector\")
+addpath("arucoDetector\dictionary\")
+addpath("arucoDetector\include\")
+
 pb = PiBot('192.168.50.1'); % Use this command instead if using PiBot.
 
 % Create a window to visualise the robot camera
@@ -23,26 +27,56 @@ while true
     img = pb.getImage();
     
     % detect any visible landmarks and record their ids
-    % [marker_nums, landmark_centres, marker_corners] = detectArucoPoses(img, marker_length, cameraParams, arucoDict);
+    [marker_nums, landmark_centres, marker_corners] = detectArucoPoses(img, marker_length, cameraParams, arucoDict);
     
+    if ~isempty(landmark_centres)
+        display(landmark_centres)
+        xr = landmark_centres(:,1);  % x坐标
+        yr = landmark_centres(:,2);  % y坐标
+        %-----------------------------------------------------------------
+        % 初始化图像窗口和坐标轴范围
+        if ~exist('fig_initialized','var')
+            figure;
+            axis([-2 2 -2 2]);   % x, y 范围固定到 [-2, 2]
+            axis equal;          % 保持比例
+            hold on;
+            grid on;             % 显示网格方便看
+            fig_initialized = true;
+        end
+        %-----------------------------------------------------------------
+
+        % 清空旧点，避免残留
+        cla;
+        % 一次性画出所有点
+        plot(xr, yr, 'ro', 'MarkerSize', 8, 'LineWidth', 1.5);
+    
+        % 如果还想在每个点旁边标注对应的id
+        for k = 1:length(marker_nums)
+            text(xr(k), yr(k), sprintf('ID:%d', marker_nums(k)), ...
+                 'Color','yellow','FontSize',10, 'FontWeight','bold');
+        end
+    end
+
+    % 标注 ID
+    % for i = 1:numel(marker_nums)
+    %     text(xr(i), yr(i), sprintf('  id=%d', marker_nums(i)), ...
+    %          'VerticalAlignment','bottom','FontWeight','bold');
+    % end
+
+    % 视图范围（可选）
+    pad = 0.1;  % 额外留白
+    xlim([min(xr)-pad, max(xr)+pad]);
+    ylim([min(yr)-pad, max(yr)+pad]);
+
+    drawnow;
     % Get the image and crop
-    % 可能需要调整一下import的文件的位置
-    % 第一步拍图片然后裁剪它，并转化成灰度图，并将黑白反转，也就是黑色的line会变成白色
     gray_img = rgb2gray(img);
-    bin_img = ~imbinarize(gray_img, 0.2);
+    bin_img = ~imbinarize(gray_img, 0.4);
 
     % 第二步把灰度图的左右上下裁剪，这样只会留中心的白点，也就是小车需要跟随的点
     roi = bin_img(end-40:end-20, :);
     roi(:, 1:15) = 0;
     roi(:, end-15:end) = 0;
-
-    % 保存各个图片方便debug
-    imshow(roi, 'Parent', camAxes);
-    imwrite(img, 'original.png');
-    imwrite(gray_img, 'gray.png');
-    imwrite(bin_img, 'binary.png');
-    imwrite(roi, 'roi.png');
-
 
     % If you have reached the end of the line, you need to stop by breaking
     % the loop and print out the ids of any landmarks seen along the way.
@@ -63,13 +97,14 @@ while true
     
     % If x is negative, spin left. If x is positive, spin right (from seekdot./)
     % 判断x的正负，从而知道该往左右调整方向
-    q = -0.5 * line_centre;
+    q = -0.4 * line_centre;
     % Drive forward as soon as the dot is roughly in view
-    if abs(line_centre) > 0.4
-        u = 0.2;
+    if abs(line_centre) > 0.1
+        u = 0.05;
     else
         u = 0.1;
     end
+    
     % Lab1的函数
     [wl,wr] = inverse_kinematics(u,q);
 
