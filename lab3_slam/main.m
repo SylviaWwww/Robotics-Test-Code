@@ -8,6 +8,7 @@ addpath("../lab2_robotcontrol/arucoDetector")
 addpath("../lab2_robotcontrol/arucoDetector/include")
 addpath("../lab2_robotcontrol/arucoDetector/dictionary")
 addpath("../lab2_robotcontrol/arucoDetector/dictionary")
+addpath("../lab1_kinematics")
 
 % Load parameters
 load("../lab2_robotcontrol/cameraParameters.mat");
@@ -17,9 +18,12 @@ marker_length = 0.070;
 % Initialize the pibot connection
 % pb = Pibot('192.168.50.1');
 
+% Simulator stuff
 addpath("../simulator/");
-pb = piBotSim("floor.jpg");
-pb.place([2.5;1.5], 0);
+pb = piBotSim("floor_course.jpg");
+pb.place([1;1], 0);
+SINGLE_STEP = true;          % run exactly one control/sense step for follow line sim
+
 
 % Initialise your EKF class
 EKF = ekf_slam();
@@ -30,10 +34,16 @@ while(true)
     
     % measure landmarks
     % This is the function you'll use. Check the file for more details.
-    [~,~,~] = detectArucoPoses(image, marker_length, cameraParams, arucoDict);
+    %  [~,~,~] = detectArucoPoses(image, marker_length, cameraParams, arucoDict);
     
-    % run EKF functions
+    % Simulator code! comment out for the real pibot
+    marks = pb.measureLandmarks()
+    % Follow the line from lab2
+    % out = follow_line_step(pb, cameraParams, arucoDict, marker_length, true);  % <- single step
+    follow_line_step_sim
+
+
+   % run EKF functions
     
     % plot estimates
-    
 end
